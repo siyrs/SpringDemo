@@ -2,15 +2,14 @@ package vip.sirius.spring.service;
 
 import jakarta.annotation.PreDestroy;
 import jakarta.annotation.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class BackgroundTaskService implements CommandLineRunner {
     private volatile boolean isRunning = true;
-    private static final Logger logger = LoggerFactory.getLogger(BackgroundTaskService.class);
 
     @Resource
     private ActionService actionService;
@@ -23,7 +22,7 @@ public class BackgroundTaskService implements CommandLineRunner {
     private void executeContinuousTask() {
         while (isRunning) {
             try {
-                logger.info("执行任务中...");
+                log.info("执行任务中...");
 
 
                 actionService.getNextAction();
@@ -31,7 +30,7 @@ public class BackgroundTaskService implements CommandLineRunner {
                 Thread.sleep(3000); // 任务逻辑替换点
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.error("任务中断", e);
+                log.error("任务中断", e);
                 isRunning = false;
             }
         }
@@ -40,6 +39,6 @@ public class BackgroundTaskService implements CommandLineRunner {
     @PreDestroy
     public void stopTask() {
         isRunning = false;
-        logger.info("后台任务已停止");
+        log.info("后台任务已停止");
     }
 }
